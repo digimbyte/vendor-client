@@ -16,7 +16,10 @@
             color: #333;
         }
 
-        h1, h2, h3, h4 {
+        h1,
+        h2,
+        h3,
+        h4 {
             color: #444;
         }
 
@@ -32,7 +35,7 @@
             box-sizing: border-box;
             background-color: #fff;
             border-radius: 5px;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .item img,
@@ -44,6 +47,7 @@
 
         /* Responsive Design */
         @media (max-width: 600px) {
+
             .item,
             .trade {
                 width: 100%;
@@ -58,7 +62,7 @@
             background-color: #fff;
             padding: 15px;
             border-radius: 5px;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         label {
@@ -101,7 +105,7 @@
             box-sizing: border-box;
             background-color: #f9f9f9;
             border-radius: 5px;
-            box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         #tradesContainer .trade img {
@@ -134,11 +138,13 @@
         #godotCanvasContainer {
             text-align: center;
             margin-top: 50px;
-            position: relative; /* To contain absolutely positioned Godot elements */
-            background-color: #000; /* Background for Godot canvas */
+            position: relative;
+            /* To contain absolutely positioned Godot elements */
+            background-color: #000;
+            /* Background for Godot canvas */
             padding: 10px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
 
         #godotCanvas {
@@ -422,7 +428,7 @@
         // User Metadata
         var userMetadata = {
             userId: "user12345",
-            admin:false,
+            admin: false,
             inventory: [
                 {
                     name: "Gold",
@@ -583,7 +589,7 @@
         function getUser() {
             return userMetadata.userId;
         }
-        function isAdmin() {
+        function getAdmin() {
             return userMetadata.admin;
         }
 
@@ -1017,6 +1023,26 @@
                 }
             });
         });
+
+        /**
+         * Attach functions to the window object for Godot to access.
+         */
+        window.getUser = getUser;
+        window.getInventory = getInventory;
+        window.getUserItemAmount = getUserItemAmount;
+        window.createTrade = createTrade;
+        window.readTrade = readTrade;
+        window.updateTrade = updateTrade;
+        window.deleteTrade = deleteTrade;
+
+        /**
+         * [Optional] Function to allow Godot to call back into JavaScript if needed.
+         * Example: Receive data from Godot.
+         */
+        window.receiveFromGodot = function (data) {
+            console.log("Received from Godot:", data);
+            // Handle data as needed
+        };
     </script>
 </body>
 
