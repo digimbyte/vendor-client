@@ -34,10 +34,8 @@ func get_item_amount(uid: String):
 func create_new_trade(offer_uid: String, offer_amount: float, cost_uid: String, cost_amount: float, bundles: int):
 	if not js:
 		return
-	var uuid = await js.call("generateUUID")
 	
 	var payload = {
-		"uid": uuid,
 		"offer": {
 			"uid": offer_uid,
 			"amount": offer_amount
