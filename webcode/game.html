@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>User Inventory Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Main Website Styling */
+
+        /* Basic styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        h1, h2, h3, h4 {
+            color: #444;
+        }
+
+        .item,
+        .trade {
+            border: 1px solid #ccc;
+            margin: 10px;
+            padding: 10px;
+            display: inline-block;
+            vertical-align: top;
+            width: 150px;
+            text-align: center;
+            box-sizing: border-box;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .item img,
+        .trade img {
+            max-width: 80px;
+            display: block;
+            margin: 0 auto 5px auto;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .item,
+            .trade {
+                width: 100%;
+                display: block;
+            }
+        }
+
+        /* Form Styling */
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #28a745;
+            border: none;
+            color: #fff;
+            border-radius: 3px;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        /* Trades Section Styling */
+        #tradesContainer .trade {
+            border: 1px solid #888;
+            padding: 10px;
+            margin: 10px;
+            width: 300px;
+            box-sizing: border-box;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+
+        #tradesContainer .trade img {
+            max-width: 60px;
+            margin: 5px;
+        }
+
+        #paginationControls {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        #paginationControls button {
+            padding: 5px 10px;
+            margin: 0 5px;
+            cursor: pointer;
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+
+        #paginationControls button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        /* Godot Game Canvas Styling */
+        #godotCanvasContainer {
+            text-align: center;
+            margin-top: 50px;
+            position: relative; /* To contain absolutely positioned Godot elements */
+            background-color: #000; /* Background for Godot canvas */
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        #godotCanvas {
+            width: 800px;
+            height: 600px;
+            border: 2px solid #000;
+            display: block;
+            margin: 0 auto;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 850px) {
+            #godotCanvas {
+                width: 100%;
+                height: auto;
+            }
+        }
+
+        /* Godot Export Scoped Styling */
+        #godotCanvasContainer html,
+        #godotCanvasContainer body,
+        #godotCanvasContainer #godotCanvas {
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+
+        #godotCanvasContainer #godotCanvas:focus {
+            outline: none;
+        }
+
+        #godotCanvasContainer #status,
+        #godotCanvasContainer #status-splash,
+        #godotCanvasContainer #status-progress {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+        }
+
+        #godotCanvasContainer #status {
+            background-color: rgba(36, 36, 36, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            visibility: hidden;
+            z-index: 1000;
+            border-radius: 5px;
+        }
+
+        #godotCanvasContainer #status-splash {
+            max-height: 100%;
+            max-width: 100%;
+            margin: auto;
+        }
+
+        #godotCanvasContainer #status-progress,
+        #godotCanvasContainer #status-notice {
+            display: none;
+        }
+
+        #godotCanvasContainer #status-progress {
+            bottom: 10%;
+            width: 50%;
+            margin: 0 auto;
+        }
+
+        #godotCanvasContainer #status-notice {
+            background-color: #5b3943;
+            border-radius: 0.5rem;
+            border: 1px solid #9b3943;
+            color: #e0e0e0;
+            font-family: 'Noto Sans', 'Droid Sans', Arial, sans-serif;
+            line-height: 1.3;
+            margin: 0 2rem;
+            overflow: hidden;
+            padding: 1rem;
+            text-align: center;
+            z-index: 1;
+        }
+    </style>
+    <link rel="manifest" href="Vendor.manifest.json">
+</head>
+
+<body>
+    <h1>User Inventory Demo</h1>
+
+    <p><strong>User UID:</strong> <span id="userId"></span></p>
+
+    <h2>Current Inventory</h2>
+    <div id="inventoryContainer">
+        <!-- User inventory will be displayed here on page load -->
+    </div>
+
+    <hr />
+
+    <h2>Create a Trade</h2>
+    <form id="createTradeForm">
+        <label for="offerItem">Offer Item:</label>
+        <select id="offerItem" required>
+            <option value="">Select Item</option>
+            <!-- Dynamically populate options -->
+        </select>
+
+        <label for="offerAmount">Offer Amount:</label>
+        <input type="number" id="offerAmount" step="0.0001" required />
+
+        <label for="costItem">Cost Item:</label>
+        <select id="costItem" required>
+            <option value="">Select Item</option>
+            <!-- Dynamically populate options -->
+        </select>
+
+        <label for="costAmount">Cost Amount:</label>
+        <input type="number" id="costAmount" step="0.0001" required />
+
+        <label for="bundles">Bundles:</label>
+        <input type="number" id="bundles" min="1" required />
+
+        <button type="submit">Create Trade</button>
+    </form>
+
+    <hr />
+
+    <h2>All Possible Items</h2>
+    <button onclick="displayAllItems()">Show All Item Types</button>
+    <div id="itemsContainer" style="margin-top: 15px;">
+        <!-- All possible items will be displayed here when button is clicked -->
+    </div>
+
+    <hr />
+
+    <h2>Available Trades</h2>
+    <div id="tradesContainer" style="margin-top: 15px;">
+        <!-- Trades will be displayed here -->
+    </div>
+    <div id="paginationControls">
+        <button id="prevPage" onclick="prevPage()">Previous</button>
+        <span id="currentPage">1</span>
+        <button id="nextPage" onclick="nextPage()">Next</button>
+    </div>
+
+    <hr />
+
+    <!-- Godot Game Canvas -->
+    <div id="godotCanvasContainer">
+        <h2>Vendor Client</h2>
+        <canvas id="godotCanvas" tabindex="0">
+            Your browser does not support the canvas tag.
+        </canvas>
+
+        <div id="status">
+            <img id="status-splash" src="Vendor.png" alt="Loading...">
+            <progress id="status-progress"></progress>
+            <div id="status-notice"></div>
+        </div>
+    </div>
+
+    <noscript>
+        Your browser does not support JavaScript.
+    </noscript>
+
+    <!-- Godot Export Scripts -->
+    <script src="Vendor.js"></script>
+    <script>
+        const GODOT_CONFIG = {
+            "args": [],
+            "canvasResizePolicy": 2,
+            "ensureCrossOriginIsolationHeaders": true,
+            "executable": "Vendor",
+            "experimentalVK": false,
+            "fileSizes": {
+                "Vendor.pck": 1366384,
+                "Vendor.wasm": 43016933
+            },
+            "focusCanvas": true,
+            "gdextensionLibs": [],
+            "serviceWorker": "Vendor.service.worker.js"
+        };
+        const GODOT_THREADS_ENABLED = false;
+        const engine = new Engine(GODOT_CONFIG);
+
+        (function () {
+            const statusOverlay = document.getElementById('status');
+            const statusProgress = document.getElementById('status-progress');
+            const statusNotice = document.getElementById('status-notice');
+
+            let initializing = true;
+            let statusMode = '';
+
+            function setStatusMode(mode) {
+                if (statusMode === mode || !initializing) {
+                    return;
+                }
+                if (mode === 'hidden') {
+                    statusOverlay.remove();
+                    initializing = false;
+                    return;
+                }
+                statusOverlay.style.visibility = 'visible';
+                statusProgress.style.display = mode === 'progress' ? 'block' : 'none';
+                statusNotice.style.display = mode === 'notice' ? 'block' : 'none';
+                statusMode = mode;
+            }
+
+            function setStatusNotice(text) {
+                while (statusNotice.lastChild) {
+                    statusNotice.removeChild(statusNotice.lastChild);
+                }
+                const lines = text.split('\n');
+                lines.forEach((line) => {
+                    statusNotice.appendChild(document.createTextNode(line));
+                    statusNotice.appendChild(document.createElement('br'));
+                });
+            }
+
+            function displayFailureNotice(err) {
+                console.error(err);
+                if (err instanceof Error) {
+                    setStatusNotice(err.message);
+                } else if (typeof err === 'string') {
+                    setStatusNotice(err);
+                } else {
+                    setStatusNotice('An unknown error occurred');
+                }
+                setStatusMode('notice');
+                initializing = false;
+            }
+
+            const missing = Engine.getMissingFeatures({
+                threads: GODOT_THREADS_ENABLED,
+            });
+
+            if (missing.length !== 0) {
+                if (GODOT_CONFIG['serviceWorker'] && GODOT_CONFIG['ensureCrossOriginIsolationHeaders'] && 'serviceWorker' in navigator) {
+                    // There's a chance that installing the service worker would fix the issue
+                    Promise.race([
+                        navigator.serviceWorker.getRegistration().then((registration) => {
+                            if (registration != null) {
+                                return Promise.reject(new Error('Service worker already exists.'));
+                            }
+                            return registration;
+                        }).then(() => engine.installServiceWorker()),
+                        // For some reason, `getRegistration()` can stall
+                        new Promise((resolve) => {
+                            setTimeout(() => resolve(), 2000);
+                        }),
+                    ]).catch((err) => {
+                        console.error('Error while registering service worker:', err);
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    // Display the message as usual
+                    const missingMsg = 'Error\nThe following features required to run Godot projects on the Web are missing:\n';
+                    displayFailureNotice(missingMsg + missing.join('\n'));
+                }
+            } else {
+                setStatusMode('progress');
+                engine.startGame({
+                    'onProgress': function (current, total) {
+                        if (current > 0 && total > 0) {
+                            statusProgress.value = current;
+                            statusProgress.max = total;
+                        } else {
+                            statusProgress.removeAttribute('value');
+                            statusProgress.removeAttribute('max');
+                        }
+                    },
+                }).then(() => {
+                    setStatusMode('hidden');
+                }, displayFailureNotice);
+            }
+        }());
+    </script>
+
+    <!-- Main Website Scripts -->
+    <script>
+        // User Metadata
+        var userMetadata = {
+            userId: "user12345",
+            inventory: [
+                {
+                    name: "Gold",
+                    uid: "02",
+                    amount: 56.6,
+                },
+                {
+                    name: "Silver",
+                    uid: "03",
+                    amount: 12.25,
+                }
+            ],
+        };
+
+        // Properties
+        var properties = [
+            {
+                name: "Diamonds",
+                uid: "01",
+                image: "https://i.ibb.co/KFkgCZY/diamond.png",
+                division: 1, // Indivisible
+            },
+            {
+                name: "Gold",
+                uid: "02",
+                image: "https://i.ibb.co/jRBdx8d/gold.png",
+                division: 4, // Divisible up to 4
+            },
+            {
+                name: "Silver",
+                uid: "03",
+                image: "https://i.ibb.co/jHM5zq0/silver.png",
+                division: 4,
+            },
+            {
+                name: "Copper",
+                uid: "05",
+                image: "https://i.ibb.co/26VXxJ9/copper.png",
+                division: 4,
+            },
+            {
+                name: "Rock",
+                uid: "99",
+                image: "https://i.ibb.co/Bf4r2LT/rock.jpg",
+                division: 1,
+            },
+        ];
+
+        // Vending Stock
+        var vendingStock = [
+            {
+                uid: "1",
+                offer: { item: "Gold", amount: 5 },
+                cost: { item: "Silver", amount: 20.4 },
+                seller: "user123",
+                bundles: 6
+            },
+            {
+                uid: "2",
+                offer: { item: "Diamonds", amount: 1 },
+                cost: { item: "Gold", amount: 100 },
+                seller: "user123",
+                bundles: 2
+            },
+            {
+                uid: "3",
+                offer: { item: "Copper", amount: 10 },
+                cost: { item: "Gold", amount: 2 },
+                seller: "user12333",
+                bundles: 5
+            },
+            {
+                uid: "4",
+                offer: { item: "Silver", amount: 3 },
+                cost: { item: "Copper", amount: 100 },
+                seller: "user12345",
+                bundles: 7
+            },
+            {
+                uid: "5",
+                offer: { item: "Gold", amount: 0.5 },
+                cost: { item: "Silver", amount: 1 },
+                seller: "user123",
+                bundles: 4
+            },
+            {
+                uid: "6",
+                offer: { item: "Rock", amount: 1 },
+                cost: { item: "Gold", amount: 0.1 },
+                seller: "user123",
+                bundles: 3
+            },
+            {
+                uid: "7",
+                offer: { item: "Gold", amount: 12 },
+                cost: { item: "Silver", amount: 6 },
+                seller: "user123",
+                bundles: 2
+            },
+            {
+                uid: "8",
+                offer: { item: "Silver", amount: 5 },
+                cost: { item: "Gold", amount: 10 },
+                seller: "user12345",
+                bundles: 8
+            },
+            {
+                uid: "9",
+                offer: { item: "Copper", amount: 8 },
+                cost: { item: "Silver", amount: 2.5 },
+                seller: "user12345",
+                bundles: 9
+            },
+            {
+                uid: "10",
+                offer: { item: "Diamonds", amount: 3 },
+                cost: { item: "Gold", amount: 30 },
+                seller: "user123",
+                bundles: 1
+            },
+            {
+                uid: "11",
+                offer: { item: "Gold", amount: 0.4 },
+                cost: { item: "Copper", amount: 10 },
+                seller: "user123",
+                bundles: 5
+            },
+            {
+                uid: "12",
+                offer: { item: "Rock", amount: 100 },
+                cost: { item: "Gold", amount: 5 },
+                seller: "user123",
+                bundles: 10
+            },
+            {
+                uid: "13",
+                offer: { item: "Silver", amount: 20 },
+                cost: { item: "Gold", amount: 5 },
+                seller: "user123",
+                bundles: 2
+            }
+        ];
+
+        /**
+         * Generates a simple UUID.
+         */
+        function generateUUID() { // Simple UUID generator
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0,
+                    v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        /**
+         * Returns the simulated user uid.
+         */
+        function getUser() {
+            return userMetadata.userId;
+        }
+
+        /**
+         * Returns the user's actual inventory (a subset of items and amounts).
+         */
+        function getInventory() {
+            return userMetadata.inventory.map(i => {
+                const item = properties.find(o => o.name == i.name)
+
+                return {
+                    name: i.name,
+                    amount: i.amount,
+                    image: item.image,
+                    division: item.division
+                }
+            });
+        }
+
+        /**
+         * Populates the offer and cost item dropdowns in the create trade form.
+         * The offerItem dropdown only includes items that the user has in their inventory.
+         */
+        function populateItemSelects() {
+            const offerSelect = document.getElementById('offerItem');
+            const costSelect = document.getElementById('costItem');
+
+            // Clear existing options except the first default option
+            offerSelect.innerHTML = '<option value="">Select Item</option>';
+            costSelect.innerHTML = '<option value="">Select Item</option>';
+
+            // Get the list of items the user has in their inventory
+            const userItems = userMetadata.inventory.map(item => item.uid);
+
+            // Populate Offer Item dropdown with only user's items
+            properties.forEach(item => {
+                if (userItems.includes(item.uid) && getUserItemAmount(item.uid) > 0) {
+                    const option = document.createElement('option');
+                    option.value = item.uid;
+                    option.textContent = item.name;
+                    offerSelect.appendChild(option);
+                }
+            });
+
+            // Populate Cost Item dropdown with all items (you can customize this if needed)
+            properties.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.uid;
+                option.textContent = item.name;
+                costSelect.appendChild(option);
+            });
+        }
+
+        /**
+         * Helper function to get the amount of a specific item in the user's inventory.
+         * @param {string} uid - The UID of the item.
+         * @returns {number} - The amount of the item.
+         */
+        function getUserItemAmount(uid) {
+            const item = userMetadata.inventory.find(i => i.uid === uid);
+            return item ? item.amount : 0;
+        }
+
+        /**
+         * Creates a new trade if the user has enough resources.
+         */
+        function createTrade(payload) {
+            const offer_item = properties.find(o => o.uid == payload.offer.uid);
+            const cost_item = properties.find(o => o.uid == payload.cost.uid);
+
+            // Calculate total offer required
+            const total = payload.offer.amount * payload.bundles;
+            const invStock = userMetadata.inventory.find(i => offer_item.uid == i.uid);
+            if (invStock && invStock.amount >= total) {
+                // Remove from inventory
+                invStock.amount -= total;
+                const newTrade = {
+                    uid: generateUUID(),
+                    offer: { item: offer_item.name, amount: payload.offer.amount },
+                    cost: { item: cost_item.name, amount: payload.cost.amount },
+                    seller: userMetadata.userId,
+                    bundles: payload.bundles
+                }
+
+                vendingStock.push(newTrade);
+                return { success: "Trade created successfully!" };
+            }
+            else {
+                return { error: "Not enough supply. Total available: " + (invStock ? invStock.amount : 0) };
+            }
+        }
+
+        /**
+         * Reads trades based on the page number.
+         */
+        function readTrade(page) {
+            // Reads 5 items at a time, return next 5 items
+            const cursor = page * 5;
+            return vendingStock.slice(cursor, cursor + 5).map(i => {
+                const offer = properties.find(o => o.name == i.offer.item);
+                const cost = properties.find(o => o.name == i.cost.item);
+
+                return {
+                    uid: i.uid,
+                    offer: { item: i.offer.item, amount: i.offer.amount, image: offer.image, division: offer.division },
+                    cost: { item: i.cost.item, amount: i.cost.amount, image: cost.image, division: cost.division },
+                    owner: i.seller,
+                    bundles: i.bundles
+                }
+            });
+        }
+
+        /**
+         * Updates a trade when a user purchases it.
+         */
+        function updateTrade(payload) {
+            // { uid: "", amount: 0 }
+            const trade = vendingStock.find(i => i.uid == payload.uid);
+            if (!trade) {
+                return { error: "No valid trade found.", method: "refresh", scope: "trades" };
+            }
+            const invStock = userMetadata.inventory.find(i => i.name === trade.cost.item);
+            if (invStock && invStock.amount >= trade.cost.amount * payload.amount) {
+                invStock.amount -= trade.cost.amount * payload.amount; // Deduct cost from inventory
+
+                // Add the offered items to user's inventory
+                let userItem = userMetadata.inventory.find(i => i.name === trade.offer.item);
+                if (userItem) {
+                    userItem.amount += trade.offer.amount * payload.amount;
+                } else {
+                    userMetadata.inventory.push({
+                        name: trade.offer.item,
+                        uid: properties.find(p => p.name === trade.offer.item).uid,
+                        amount: trade.offer.amount * payload.amount,
+                    });
+                }
+
+                // Update the trade's bundles
+                trade.bundles -= payload.amount;
+
+                // Remove the trade if no bundles remain
+                if (trade.bundles <= 0) {
+                    const tradeIndex = vendingStock.findIndex(i => i.uid === payload.uid);
+                    if (tradeIndex !== -1) {
+                        vendingStock.splice(tradeIndex, 1);
+                    }
+                }
+
+                return { success: "Trade updated successfully!" };
+            } else {
+                return { error: "No available stock.", method: "refresh", scope: "inventory" };
+            }
+        }
+
+        /**
+         * Deletes a trade if the user owns it.
+         */
+        function deleteTrade(trade_id) {
+            // Check if this user owns the trade
+            const index = vendingStock.findIndex(i => i.uid == trade_id);
+            if (index === -1) {
+                return { error: "Trade not found.", method: "refresh", scope: "trades" };
+            }
+            const trade = vendingStock[index];
+            if (trade && trade.seller == userMetadata.userId) {
+                const props = properties.find(i => i.name === trade.offer.item);
+                const inv = userMetadata.inventory.find(i => i.uid === props.uid);
+                if (inv) {
+                    inv.amount += trade.bundles * trade.offer.amount;
+                }
+                else {
+                    userMetadata.inventory.push(
+                        {
+                            name: props.name,
+                            uid: props.uid,
+                            amount: trade.bundles * trade.offer.amount,
+                        })
+                }
+                vendingStock.splice(index, 1); // Remove the trade from vendingStock
+                return { success: "Trade deleted successfully!", method: "refresh", scope: "inventory" };
+            }
+            else {
+                return { error: "Not owned by user.", method: "null", scope: "trades" };
+            }
+        }
+
+        /**
+         * Displays the user’s inventory in the #inventoryContainer element.
+         */
+        function displayUserInventory() {
+            const userId = getUser();
+            document.getElementById("userId").textContent = userId;
+
+            const inventory = getInventory();
+            const inventoryContainer = document.getElementById("inventoryContainer");
+            inventoryContainer.innerHTML = ""; // Clear previous content
+
+            inventory.forEach((item) => {
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "item";
+
+                const itemName = document.createElement("h3");
+                itemName.textContent = item.name;
+
+                const itemImg = document.createElement("img");
+                itemImg.src = item.image;
+                itemImg.alt = item.name;
+
+                const itemAmount = document.createElement("p");
+                itemAmount.textContent = "Amount: " + item.amount;
+
+                const itemDivision = document.createElement("p");
+                itemDivision.textContent = "Division: " + item.division;
+
+                itemDiv.appendChild(itemName);
+                itemDiv.appendChild(itemImg);
+                itemDiv.appendChild(itemAmount);
+                itemDiv.appendChild(itemDivision);
+
+                inventoryContainer.appendChild(itemDiv);
+            });
+        }
+
+        /**
+         * Displays all possible item types in the #itemsContainer element.
+         */
+        function displayAllItems() {
+            const items = properties; // Directly use properties
+            const itemsContainer = document.getElementById("itemsContainer");
+            itemsContainer.innerHTML = ""; // Clear previous content
+
+            items.forEach((item) => {
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "item";
+
+                const itemName = document.createElement("h3");
+                itemName.textContent = item.name;
+
+                const itemImg = document.createElement("img");
+                itemImg.src = item.image;
+                itemImg.alt = item.name;
+
+                const itemDivision = document.createElement("p");
+                itemDivision.textContent = "Division: " + item.division;
+
+                itemDiv.appendChild(itemName);
+                itemDiv.appendChild(itemImg);
+                itemDiv.appendChild(itemDivision);
+
+                itemsContainer.appendChild(itemDiv);
+            });
+        }
+
+        /**
+         * Displays available trades with pagination.
+         */
+        var currentTradePage = 0;
+
+        function displayTrades() {
+            const trades = readTrade(currentTradePage);
+            const tradesContainer = document.getElementById("tradesContainer");
+            tradesContainer.innerHTML = ""; // Clear previous content
+
+            if (trades.length === 0) {
+                tradesContainer.textContent = "No trades available on this page.";
+                return;
+            }
+
+            trades.forEach((trade) => {
+                const tradeDiv = document.createElement("div");
+                tradeDiv.className = "trade";
+
+                // Offer Details
+                const offerHeader = document.createElement("h4");
+                offerHeader.textContent = "Offer:";
+                const offerItem = document.createElement("p");
+                offerItem.textContent = `${trade.offer.item} - ${trade.offer.amount}`;
+                const offerImg = document.createElement("img");
+                offerImg.src = trade.offer.image;
+                offerImg.alt = trade.offer.item;
+
+                // Cost Details
+                const costHeader = document.createElement("h4");
+                costHeader.textContent = "Cost:";
+                const costItem = document.createElement("p");
+                costItem.textContent = `${trade.cost.item} - ${trade.cost.amount}`;
+                const costImg = document.createElement("img");
+                costImg.src = trade.cost.image;
+                costImg.alt = trade.cost.item;
+
+                // Trade Info
+                const seller = document.createElement("p");
+                seller.textContent = `Seller: ${trade.owner}`;
+                const bundles = document.createElement("p");
+                bundles.textContent = `Bundles: ${trade.bundles}`;
+
+                // Action Buttons
+                const purchaseButton = document.createElement("button");
+                purchaseButton.textContent = "Purchase";
+                purchaseButton.onclick = () => {
+                    const purchaseAmount = prompt("Enter number of bundles to purchase:", "1");
+                    const amount = parseInt(purchaseAmount);
+                    if (isNaN(amount) || amount <= 0) {
+                        alert("Invalid amount.");
+                        return;
+                    }
+                    if (amount > trade.bundles) {
+                        alert("Not enough bundles available.");
+                        return;
+                    }
+                    const payload = { uid: trade.uid, amount: amount };
+                    const result = updateTrade(payload);
+                    if (result && result.error) {
+                        alert('Error: ' + result.error);
+                    } else {
+                        displayUserInventory();
+                        populateItemSelects(); // Refresh offer items based on new inventory
+                        displayTrades();
+                        alert('Purchase successful!');
+                    }
+                };
+
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+                deleteButton.style.backgroundColor = "#dc3545";
+                deleteButton.onclick = () => {
+                    const confirmDelete = confirm("Are you sure you want to delete this trade?");
+                    if (confirmDelete) {
+                        const result = deleteTrade(trade.uid);
+                        if (result && result.error) {
+                            alert('Error: ' + result.error);
+                        } else {
+                            displayUserInventory();
+                            populateItemSelects(); // Refresh offer items based on new inventory
+                            displayTrades();
+                            alert('Trade deleted successfully!');
+                        }
+                    }
+                };
+
+                tradeDiv.appendChild(offerHeader);
+                tradeDiv.appendChild(offerImg);
+                tradeDiv.appendChild(offerItem);
+                tradeDiv.appendChild(costHeader);
+                tradeDiv.appendChild(costImg);
+                tradeDiv.appendChild(costItem);
+                tradeDiv.appendChild(seller);
+                tradeDiv.appendChild(bundles);
+                tradeDiv.appendChild(purchaseButton);
+                tradeDiv.appendChild(deleteButton);
+
+                tradesContainer.appendChild(tradeDiv);
+            });
+
+            // Update Pagination Controls
+            document.getElementById("currentPage").textContent = currentTradePage + 1;
+            document.getElementById("prevPage").disabled = currentTradePage === 0;
+            document.getElementById("nextPage").disabled = vendingStock.length <= (currentTradePage + 1) * 5;
+        }
+
+        function nextPage() {
+            if ((currentTradePage + 1) * 5 < vendingStock.length) {
+                currentTradePage++;
+                displayTrades();
+            }
+        }
+
+        function prevPage() {
+            if (currentTradePage > 0) {
+                currentTradePage--;
+                displayTrades();
+            }
+        }
+
+        /**
+         * Validates the trade payload.
+         */
+        function validateTradePayload(payload) {
+            if (!payload.offer.uid || isNaN(payload.offer.amount) || payload.offer.amount <= 0) {
+                return "Invalid offer details.";
+            }
+            if (!payload.cost.uid || isNaN(payload.cost.amount) || payload.cost.amount <= 0) {
+                return "Invalid cost details.";
+            }
+            if (isNaN(payload.bundles) || payload.bundles <= 0) {
+                return "Invalid bundles value.";
+            }
+            return null;
+        }
+
+        /**
+         * Event Listener for Trade Creation Form Submission
+         */
+        window.addEventListener('load', () => {
+            displayUserInventory();
+            populateItemSelects(); // Populate dropdowns
+
+            // Display the first page of trades by default
+            displayTrades();
+
+            document.getElementById('createTradeForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const payload = {
+                    uid: generateUUID(), // Use UUID for uniqueness
+                    offer: {
+                        uid: document.getElementById('offerItem').value,
+                        amount: parseFloat(document.getElementById('offerAmount').value)
+                    },
+                    cost: {
+                        uid: document.getElementById('costItem').value,
+                        amount: parseFloat(document.getElementById('costAmount').value)
+                    },
+                    bundles: parseInt(document.getElementById('bundles').value)
+                };
+
+                // Validate Payload
+                const validationError = validateTradePayload(payload);
+                if (validationError) {
+                    alert('Error: ' + validationError);
+                    return;
+                }
+
+                const result = createTrade(payload);
+                if (result.success) {
+                    displayUserInventory();
+                    alert(result.success);
+                    populateItemSelects(); // Refresh offer items based on new inventory
+                    displayTrades(); // Refresh trades to include the new trade
+                } else if (result.error) {
+                    alert('Error: ' + result.error);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
