@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://cvkudlwg6su53"]
+[gd_scene load_steps=10 format=3 uid="uid://cvkudlwg6su53"]
 
 [ext_resource type="Texture2D" uid="uid://hqmyik8nxpb4" path="res://images/vendor.jpg" id="1_yv4s3"]
 [ext_resource type="PackedScene" uid="uid://cwhncj4c4ar4g" path="res://trade_item.tscn" id="2_b4ywc"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://dn56k3eohvs8g" path="res://images/vendor_dark.jpg" id="2_ud3gt"]
 [ext_resource type="Script" path="res://flicker.gd" id="3_qy4be"]
 [ext_resource type="Texture2D" uid="uid://c25cob6pyrvpr" path="res://images/light_round.png" id="5_dprem"]
+[ext_resource type="Texture2D" uid="uid://c1jvijekbyibv" path="res://images/icon_admin_trash.png" id="6_8xf86"]
 [ext_resource type="Texture2D" uid="uid://b6lcv3fljntsc" path="res://images/light_square.png" id="6_xkh2g"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_sw4a5"]
@@ -114,13 +115,15 @@ offset_right = 132.733
 offset_bottom = 561.912
 text = "BUY"
 
-[node name="Admin_Delete" type="Button" parent="Controls/Inputs"]
-layout_mode = 0
-offset_left = 17.0
-offset_top = 470.0
-offset_right = 47.0
-offset_bottom = 501.0
-text = "🗑️"
+[node name="utility" type="Panel" parent="Controls/Inputs"]
+offset_left = 12.0
+offset_top = 467.0
+offset_right = 52.0
+offset_bottom = 507.0
+
+[node name="Admin_Trash" type="Sprite2D" parent="Controls/Inputs/utility"]
+position = Vector2(19, 20)
+texture = ExtResource("6_8xf86")
 
 [node name="Dispencer" type="Panel" parent="Controls"]
 self_modulate = Color(1, 1, 1, 0)
@@ -390,6 +393,7 @@ text = "Total: offer * count"
 horizontal_alignment = 1
 
 [node name="Item_Select" type="Panel" parent="Controls"]
+visible = false
 layout_mode = 0
 offset_left = -788.0
 offset_top = 203.0
