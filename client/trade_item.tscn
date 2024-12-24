@@ -1,6 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://cwhncj4c4ar4g"]
+[gd_scene load_steps=6 format=3 uid="uid://cwhncj4c4ar4g"]
 
-[ext_resource type="Texture2D" uid="uid://g6vpnkk2je10" path="res://default_icon.png" id="1_ikwux"]
+[ext_resource type="Texture2D" uid="uid://g6vpnkk2je10" path="res://images/default_icon.png" id="1_ikwux"]
+[ext_resource type="Texture2D" uid="uid://vwl8wc2e4lik" path="res://images/icon_minus.png" id="2_1gt7g"]
+[ext_resource type="Texture2D" uid="uid://cnup5uasngqqc" path="res://images/icon_plus.png" id="3_1lylg"]
+[ext_resource type="Texture2D" uid="uid://dppjley4qcn71" path="res://images/icon_trash.png" id="4_0ufwk"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_teinh"]
 bg_color = Color(0.310799, 0.0903324, 0, 1)
@@ -12,16 +15,33 @@ offset_right = 339.0
 offset_bottom = 217.0
 metadata/_edit_horizontal_guides_ = [211.0]
 
-[node name="TradeItem2" type="Panel" parent="."]
+[node name="Selected" type="Panel" parent="."]
 visible = false
 layout_mode = 0
 offset_right = 317.0
 offset_bottom = 67.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_teinh")
 
+[node name="Cart" type="Label" parent="Selected"]
+layout_mode = 2
+offset_left = 232.0
+offset_top = 12.0
+offset_right = 278.0
+offset_bottom = 35.0
+text = "5"
+horizontal_alignment = 1
+
+[node name="Less" type="Sprite2D" parent="Selected"]
+position = Vector2(216, 22)
+texture = ExtResource("2_1gt7g")
+
+[node name="More" type="Sprite2D" parent="Selected"]
+position = Vector2(294, 22)
+texture = ExtResource("3_1lylg")
+
 [node name="Offer" type="Sprite2D" parent="."]
 position = Vector2(34.8677, 36)
-scale = Vector2(0.0784469, 0.0784469)
+scale = Vector2(0.8, 0.8)
 texture = ExtResource("1_ikwux")
 
 [node name="Offer_Size" type="Label" parent="."]
@@ -34,7 +54,7 @@ text = "x2"
 
 [node name="Cost" type="Sprite2D" parent="."]
 position = Vector2(116, 36)
-scale = Vector2(0.0784469, 0.0784469)
+scale = Vector2(0.8, 0.8)
 texture = ExtResource("1_ikwux")
 
 [node name="Cost_Size" type="Label" parent="."]
@@ -53,34 +73,13 @@ offset_right = 310.0
 offset_bottom = 61.0
 text = "Stock: 16"
 
-[node name="More" type="Button" parent="."]
-layout_mode = 2
-offset_left = 280.0
-offset_top = 10.0
-offset_right = 310.0
-offset_bottom = 41.0
-text = "➕"
-
-[node name="Cart" type="Label" parent="."]
-layout_mode = 2
-offset_left = 237.0
-offset_top = 15.0
-offset_right = 280.0
-offset_bottom = 38.0
-text = "5"
-horizontal_alignment = 1
-
-[node name="Less" type="Button" parent="."]
-layout_mode = 2
-offset_left = 207.0
-offset_top = 10.0
-offset_right = 237.0
-offset_bottom = 41.0
-text = "➖"
-
-[node name="More2" type="Button" parent="."]
+[node name="utility" type="Panel" parent="."]
+layout_mode = 0
 offset_left = 325.0
-offset_top = 15.0
-offset_right = 355.0
-offset_bottom = 46.0
-text = "🗑️"
+offset_top = 12.0
+offset_right = 365.0
+offset_bottom = 52.0
+
+[node name="Trash" type="Sprite2D" parent="utility"]
+position = Vector2(19, 20)
+texture = ExtResource("4_0ufwk")

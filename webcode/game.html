@@ -422,6 +422,7 @@
         // User Metadata
         var userMetadata = {
             userId: "user12345",
+            admin:false,
             inventory: [
                 {
                     name: "Gold",
@@ -581,6 +582,9 @@
          */
         function getUser() {
             return userMetadata.userId;
+        }
+        function isAdmin() {
+            return userMetadata.admin;
         }
 
         /**
