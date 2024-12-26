@@ -394,7 +394,6 @@ text = "Total: offer * count"
 horizontal_alignment = 1
 
 [node name="Item_Select" type="Panel" parent="Controls"]
-visible = false
 layout_mode = 0
 offset_left = -788.0
 offset_top = 203.0
@@ -494,3 +493,25 @@ offset_left = 306.0
 offset_top = 97.0
 offset_right = 322.0
 offset_bottom = 397.0
+
+[node name="Roll_Over" type="Panel" parent="Controls"]
+offset_left = -760.0
+offset_top = 28.0
+offset_right = -546.0
+offset_bottom = 87.0
+
+[node name="Name" type="Label" parent="Controls/Roll_Over"]
+offset_left = 9.0
+offset_top = 5.0
+offset_right = 207.0
+offset_bottom = 28.0
+text = "Gold
+"
+
+[node name="ID" type="Label" parent="Controls/Roll_Over"]
+offset_left = 10.0
+offset_top = 28.0
+offset_right = 207.0
+offset_bottom = 51.0
+text = "01
+"

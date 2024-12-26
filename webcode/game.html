@@ -608,6 +608,10 @@
                 }
             });
         }
+        function getAllItems() {
+            return properties
+        }
+
 
         /**
          * Populates the offer and cost item dropdowns in the create trade form.
@@ -1027,14 +1031,14 @@
         /**
          * Attach functions to the window object for Godot to access.
          */
-        window.getUser = getUser;
-        window.getAdmin = getAdmin;
-        window.getInventory = getInventory;
-        window.getUserItemAmount = getUserItemAmount;
-        window.createTrade = createTrade;
-        window.readTrade = readTrade;
-        window.updateTrade = updateTrade;
-        window.deleteTrade = deleteTrade;
+        window.getUser = getUser; // gets the users uid
+        window.getAdmin = getAdmin; // gets the admin status of the user
+        window.getInventory = getInventory; // gets the users inventory
+        window.getAllItems = getAllItems; // returns all items supported by the system
+        window.createTrade = createTrade; // creates a trade
+        window.readTrade = readTrade; // lists a trade by page number
+        window.updateTrade = updateTrade; // processes a trade
+        window.deleteTrade = deleteTrade; // removes a trade
 
         /**
          * [Optional] Function to allow Godot to call back into JavaScript if needed.
