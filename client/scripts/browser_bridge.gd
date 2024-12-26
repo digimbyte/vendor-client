@@ -19,16 +19,19 @@ func fetch_user_data():
 		return
 	var user_id = await js.call("getUser")
 	print("User ID: ", user_id)
+
+	var admin = await js.call("getAdmin")
+	print("User ID: ", user_id)
 	
 	var inventory = await js.call("getInventory")
 	print("Inventory: ", inventory)
 
 # Get amount of a specific item
-func get_item_amount(uid: String):
+func get_all_items():
 	if not js:
 		return
-	var amount = await js.call("getUserItemAmount", uid)
-	print("Amount of UID ", uid, ": ", amount)
+	var all_items = await js.call("getAllItems")
+	print("All items available: ", all_items)
 
 # Create a new trade
 func create_new_trade(offer_uid: String, offer_amount: float, cost_uid: String, cost_amount: float, bundles: int):
